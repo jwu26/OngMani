@@ -1,0 +1,59 @@
+Hi jieke & jinze，我拼了下eventlet和routes的python代码，包括了路由映射和底层并行库，只需要一个文件，30多行，非常简单。Jinze你开发restful的接口可以直接在这个文件的基础上往前做，只需要关注自己逻辑即可。
+
+import eventlet
+import eventlet.wsgi
+import routes
+import routes.middleware
+import webob.dec
+import webob.exc
+
+def wsgify_args(application):
+    @webob.dec.wsgify
+    def wrapper(self, req):
+        return application(self, req, req.environ['wsgiorg.routing_args'][1])
+    return wrapper
+
+class Application(object):
+    def __call__(self, environ, start_response):
+        raise NotImplementedError("You must implement __call__")
+
+class Middleware(Application):
+    def __init__(self, application):
+        self.application = application
+
+class ParsedRoutes(Middleware):
+    def __call__(self, environ, start_response):
+        if environ['routes.route'] is None:
+            return self.application(environ, start_response)
+
+        # If controller was not specified, call default application.
+        controller = environ['wsgiorg.routing_args'][1]['controller']
+        if controller is None:
+            return self.application(environ, start_response)
+
+        # If action was not specified, call controller.
+        action = environ['wsgiorg.routing_args'][1]['action']
+        if action is None:
+            return controller(environ, start_response)
+
+        # Call method matching action, or controller if one doesn't exist.
+        method = getattr(controller, action, controller)
+        return method(environ, start_response)
+
+class API(Application):
+    def one(self, environ, start_response):
+        start_response("200 Ok", [])
+        return 'one'
+
+    @webob.dec.wsgify
+    def two(self, req):
+        return 'two'
+
+    @wsgify_args
+    def three(self, req, args):
+        return 'three'
+
+sock = eventlet.listen(('', 12345))
+map = routes.Mapper()
+map.connect('/api/{action}/{id}', controller=API())
+eventlet.wsgi.server(sock, routes.middleware.RoutesMiddleware(ParsedRoutes(webob.exc.HTTPNotFound()), map))
