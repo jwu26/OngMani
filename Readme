@@ -1,4 +1,9 @@
-Hi jieke & jinze，我拼了下eventlet和routes的python代码，包括了路由映射和底层并行库，只需要一个文件，30多行，非常简单。Jinze你开发restful的接口可以直接在这个文件的基础上往前做，只需要关注自己逻辑即可。
+# Project: OngManibeimeihong
+#
+
+# 
+# Version: initial
+# Testing Wechat Integration.
 
 import eventlet
 import eventlet.wsgi
