@@ -18,7 +18,7 @@ import webob.dec
 import webob.exc
 from lxml import etree
 from lxml.etree import ElementTree as ET
-from msgparser import MsgParser
+from msgprocess import MsgProcess
 from debug import dbg
 from debug import __ver__
 
@@ -73,6 +73,13 @@ class API(Application):
 
     @wsgify_args
     def ongmani(self, req, args):
+
+        instance = MsgProcess(req, args)
+        ret = instance.running(req, args)
+        return ret
+
+#######################################################################################################
+'''
         method = req.method.lower()
         params=req.environ['wsgiorg.routing_args'][1]
         params_1=req.params.copy()
@@ -126,6 +133,7 @@ class API(Application):
         #return 'uploaded!')
 
         return params_echostr
+'''
 
 
 if __name__ == '__main__':

@@ -25,9 +25,9 @@ def __func__():
  
 dbg = logging.getLogger(__name__)
 # Enable Debug
-#logging.basicConfig(level=logging.DEBUG, 
+#logging.basicConfig(level=logging.ERROR, 
 #logging.basicConfig(level=logging.NOTSET, 
-logging.basicConfig(level=logging.ERROR, 
+logging.basicConfig(level=logging.DEBUG, 
       format='%(asctime)s %(filename)s[%(funcName)s] %(levelname)s %(message)s',
       datefmt='%Y %b %d:')
 #format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
