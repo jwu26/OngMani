@@ -1,5 +1,12 @@
 #!/usr/bin/python
-# We...Chat backend fo balabalabala
+#    Copyright 2014 Ongmani
+# We...Chat backend...
+#
+# Support:
+#         newbthzz@163.com
+#
+# Description:
+#
 
 #deps : python-lxml
 
@@ -11,17 +18,9 @@ import webob.dec
 import webob.exc
 from lxml import etree
 from lxml.etree import ElementTree as ET
-import msgparser
-
-def print_node(node):
-    '''Print Dom'''
-    print "=============================================="
-    if node.attrib:
-      print "node.attrib:%s" % node.attrib
-    if node.attrib.has_key("MsgId") > 0 :
-      print "node.attrib['MsgId']:%s" % node.attrib['MsgId']
-    print "node.tag:%s" % node.tag
-    print "node.text:%s" % node.text
+from msgparser import MsgParser
+from debug import dbg
+from debug import __ver__
 
 def wsgify_args(application):
     @webob.dec.wsgify
@@ -64,71 +63,75 @@ class API(Application):
 
     @webob.dec.wsgify
     def two(self, req):
-        print "req is %s\n" % req
+        dbg.info("req is %s", req)
         return 'two'
 
     @wsgify_args
     def three(self, req, args):
-        print "req is %s\n" % req
-        print "args is %s\n" % args
+        dbg.info("req is %s", req)
         return 'three'
 
     @wsgify_args
-    def upload(self, req, args):
+    def ongmani(self, req, args):
         method = req.method.lower()
         params=req.environ['wsgiorg.routing_args'][1]
         params_1=req.params.copy()
         params_sig=req.params.get('signature', '0')
         params_ts =req.params.get('timestamp', '0')
         params_nonce =req.params.get('nonce', '0')
-        params_echostr =req.params.get('echostr', '0')
+        #params_echostr =req.params.get('echostr')
+        params_echostr =req.params.get('echostr', 'helloW!')
         content_type = req.headers['Content-Type']
+
+        dbg.info("content_type: %s, args.id: %s",content_type, args['id'])
+        if content_type == 'text/plain':
+          return params_echostr
+
+        if args['id'] != 'upload':
+          dbg.error("Not Support Command by Qi'e")
+          return params_echostr
+        else:
+          dbg.debug("Upload Support")
+
         content_length = req.headers['Content-Length']
         host = req.headers['Host'] 
         
         if content_type != 'text/xml':
-          print "Only support xml format! <%s>" % content_type
+          dbg.error("Only support xml format! <%s>", content_type)
           return 
         else:
-          print "Xml is appreicated!"
+          dbg.debug("Xml is appreicated!")
         
         xmldoc = etree.fromstring(req.body)
-        to_username = xmldoc.find('ToUserName')
-        text_content = xmldoc.find('Content')
-        msg_type = xmldoc.find('MsgType')
-        print_node(text_content)
-        print "xmldoc is %s\n" % xmldoc
-        print "to useranem is %s\n" % to_username.text
-        print "text is %s\n" % text_content.text
-        print "msg type is %s\n" % msg_type.text
-        msgparser.text_get()
 
-        print "req is %s\n" % req
-        print "req.body is %s\n" % req.body
-        print "headers is %s\n" % req.headers
-        print "headers.type is %s\n" % content_type
-        print "headers.length is %s\n" % content_length
-        print "host is %s\n" % host
-        print "params is %s\n" % params
-        print "req.params is %s\n" % req.params
-        print "params_1 is %s\n" % params_1
-        print "params_sig is %s\n" % params_sig
-        print "params_ts is %s\n" % params_ts
-        print "params_nonce is %s\n" % params_nonce
-        print "params_echostr is %s\n" % params_echostr
-        print "method is %s\n" % method 
-        print "args.id is %s\n" % args['id']
-        print "args is %s\n" % args
-        if args['id'] == '1':
-          print "it's Text Uploading\n"
-        else:
-          print "Not supported\n"
-        #return 'uploaded!'
+        parser = MsgParser()
+        parser.running(req.body)
+
+        #print "req is %s\n" % req
+        dbg.debug("req.body is %s",req.body)
+        dbg.debug("headers is %s" , req.headers)
+        dbg.debug("headers.type is %s", content_type)
+        dbg.debug("headers.length is %s" ,content_length)
+        dbg.debug("host is %s" , host)
+        dbg.debug("params is %s" , params)
+        dbg.debug("req.params is %s" , req.params)
+        dbg.debug("params_1 is %s" , params_1)
+        dbg.debug("params_sig is %s" , params_sig)
+        dbg.debug("params_ts is %s" , params_ts)
+        dbg.debug("params_nonce is %s" , params_nonce)
+        dbg.debug("params_echostr is %s" , params_echostr)
+        dbg.debug("method is %s" , method )
+        dbg.debug("args.id is %s" , args['id'])
+        dbg.debug("args is %s" , args)
+        #return 'uploaded!')
+
         return params_echostr
 
 
-sock = eventlet.listen(('119.84.78.194', 80))
-#sock = eventlet.listen(('', 12345))
-map = routes.Mapper()
-map.connect('/v1.0/{action}/{id}', controller=API())
-eventlet.wsgi.server(sock, routes.middleware.RoutesMiddleware(ParsedRoutes(webob.exc.HTTPNotFound()), map))
+if __name__ == '__main__':
+  dbg.debug("Weclome!")
+  sock = eventlet.listen(('119.84.78.194', 80))
+  #sock = eventlet.listen(('', 12345))
+  map = routes.Mapper()
+  map.connect('/v1.0/{action}/{id}', controller=API())
+  eventlet.wsgi.server(sock, routes.middleware.RoutesMiddleware(ParsedRoutes(webob.exc.HTTPNotFound()), map))
