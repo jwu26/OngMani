@@ -11,6 +11,7 @@ import webob.dec
 import webob.exc
 from lxml import etree
 from lxml.etree import ElementTree as ET
+import msgparser
 
 def print_node(node):
     '''Print Dom'''
@@ -21,20 +22,6 @@ def print_node(node):
       print "node.attrib['MsgId']:%s" % node.attrib['MsgId']
     print "node.tag:%s" % node.tag
     print "node.text:%s" % node.text
-
-class MessagePaser(object):
-    def __init__:
-    def text_get:
-    '''
-    <xml>
-    <ToUserName><![CDATA[toUser]]></ToUserName>
-    <FromUserName><![CDATA[fromUser]]></FromUserName> 
-    <CreateTime>1348831860</CreateTime>
-    <MsgType><![CDATA[text]]></MsgType>
-    <Content><![CDATA[this is a test]]></Content>
-    <MsgId>1234567890123456</MsgId>
-    </xml>
-    '''
 
 def wsgify_args(application):
     @webob.dec.wsgify
@@ -114,6 +101,7 @@ class API(Application):
         print "to useranem is %s\n" % to_username.text
         print "text is %s\n" % text_content.text
         print "msg type is %s\n" % msg_type.text
+        msgparser.text_get()
 
         print "req is %s\n" % req
         print "req.body is %s\n" % req.body
