@@ -21,6 +21,7 @@ from lxml.etree import ElementTree as ET
 from debug import dbg
 from debug import __ver__
 from msgparser import MsgParser
+from saveadapter import MsgSaverAdapter
 
 class MsgProcess(object):
     def __init__(self, req, args):
@@ -71,8 +72,12 @@ class MsgProcess(object):
       parser = MsgParser()
       parser.running(req.body)
 
+      store=MsgSaverAdapter()
+      store.running(parser.data)
+      
       #print "req is %s\n" % req
       dbg.debug("req.body is %s",req.body)
+      '''
       dbg.debug("headers is %s" , req.headers)
       dbg.debug("host is %s" , self.host)
       dbg.debug("params is %s" , self.params)
@@ -83,6 +88,7 @@ class MsgProcess(object):
       dbg.debug("params_nonce is %s" , self.params_nonce)
       dbg.debug("params_echostr is %s" , self.params_echostr)
       dbg.debug("method is %s" , self.method )
+      '''
 
       dbg.debug("Exit")
       return self.params_echostr

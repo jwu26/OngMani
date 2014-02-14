@@ -31,6 +31,16 @@ class MsgParser(object):
     def __init__(self):
       dbg.debug("<%s> in", __func__())
       dbg.debug("<%s> exit", __func__())
+      '''
+      {
+       'from':xx, 'to':xx, 'date':xx, 
+       'texts':queue, 'pictures':queue,
+       'voices':queue, 'video': queue
+      }
+      '''
+
+      # xmldoc to return
+      self.data = {}
 
     def running(self, msg):
       '''
@@ -84,8 +94,10 @@ class MsgParser(object):
       dbg.debug("text_content: %s ", text_content.text)
       dbg.debug("msg_id: %s ", msg_id.text)
 
+      #Save
+      self.data['text'] = xmldoc
       dbg.debug("<%s> exit", __func__())
-     
+
       return 'text_get return'
 
     def print_node(node):

@@ -20,50 +20,70 @@ from lxml import etree
 from lxml.etree import ElementTree as ET
 from debug import dbg
 from debug import __ver__
+from filefactory import FileFactory 
   
 class MsgSaverAdapter(object):
     def __init__(self):
-      dbg.debug("<%s> in", __func__())
-      dbg.debug("<%s> exit", __func__())
+      dbg.debug("in")
+      dbg.debug("exit")
+      self.config = {'file':'1'}
 
-    def running(self, msg, adapter):
+    def saveToConsole(self, data):
+      '''
+      print on Console
+      '''
+      dbg.debug("in")
+      dbg.debug("exit")
+     
+      return 
+
+    def saveToFiles(self, data):
+      dbg.debug("in")
+
+      file=FileFactory()
+      file.write(data)
+      file.close
+
+      dbg.debug("exit")
+      return 
+
+    def saveToDB(self, data):
+      dbg.debug("in")
+      dbg.debug("exit")
+      return 
+
+    def running(self, data):
       '''
       save to :
        1. console
        2. files
        3. db...
       '''
-      dbg.debug("<%s> in", __func__())
+      dbg.debug("in")
 
-      if adapter == 'file':
-        saveToFiles(msg):
-        dbg.debug("Sucess")
+      if data.has_key('text'):
+        dbg.debug("Got a text to saving")
+      elif data.has_key('picture'):
+        dbg.debug("Got a picture to saving")
       else:
+        dbg.debug("Not support format!!")
+        return
+
+      if self.config.has_key('file'):
+        saveToFiles(data)
+        dbg.debug("Sucess")
+
+      if self.config.has_key('console'):
+        printToConsole(data)
+        dbg.debug("Sucess")
+
+      if self.config.has_key('db'):
         dbg.debug("Not Support")
 
-      dbg.debug("<%s> exit", __func__())
+      dbg.debug("exit")
 
       return
       
-    def saveToConsole(self, msg):
-      '''
-      print on Console
-      '''
-      dbg.debug("<%s> in", __func__())
-      dbg.debug("<%s> exit", __func__())
-     
-      return 
-
-    def saveToFiles(self, msg):
-      dbg.debug("<%s> in", __func__())
-      dbg.debug("<%s> exit", __func__())
-      return 
-
-    def saveToDB(self, msg):
-      dbg.debug("<%s> in", __func__())
-      dbg.debug("<%s> exit", __func__())
-      return 
-
 if __name__ == '__main__':
   dbg.debug("Ongmani.: <%s> . verion: <%s>", __name__, __ver__)
   sys.exit(main(sys.argv))
