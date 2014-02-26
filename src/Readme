@@ -12,6 +12,7 @@ $  python setup.py sdist bdist_wininst upload
 
 #Reference :
 http://docs.python.org/2/distutils/setupscript.html#setup-script
+http://docs.python.org/2/distutils/sourcedist.html
 
 
 
