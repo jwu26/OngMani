@@ -73,7 +73,7 @@ class MsgProcess(object):
       parser.running(req.body)
 
       store=MsgSaverAdapter()
-      store.running(parser.data)
+      store.running(parser)
       
       #print "req is %s\n" % req
       dbg.debug("req.body is %s",req.body)

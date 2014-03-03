@@ -20,6 +20,7 @@ from lxml import etree
 from lxml.etree import ElementTree as ET
 from debug import dbg
 from debug import __ver__
+import time
 
 import inspect
 
@@ -41,6 +42,7 @@ class MsgParser(object):
 
       # xmldoc to return
       self.data = {}
+      self.timestamp = ''
 
     def running(self, msg):
       '''
@@ -93,9 +95,15 @@ class MsgParser(object):
       dbg.debug("create time: %s ", create_time.text)
       dbg.debug("text_content: %s ", text_content.text)
       dbg.debug("msg_id: %s ", msg_id.text)
+      dbg.debug("time is %s", time.localtime(float(create_time.text)))
+      tmp = time.strftime("%Y-%m-%d",time.localtime(float(create_time.text)))
+      #tmp = time.strftime("%Y-%m-%d %X",time.localtime(float(create_time.text)))
+      dbg.debug("time str: %s", tmp)
 
       #Save
       self.data['text'] = xmldoc
+      self.timestamp='%s.%s.%s' %(from_username.text,to_username.text,tmp)
+      dbg.debug("timestamp : %s", self.timestamp)
       dbg.debug("<%s> exit", __func__())
 
       return 'text_get return'

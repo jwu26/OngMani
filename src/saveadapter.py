@@ -21,6 +21,7 @@ from lxml.etree import ElementTree as ET
 from debug import dbg
 from debug import __ver__
 from filefactory import FileFactory 
+from msgparser import MsgParser
   
 class MsgSaverAdapter(object):
     def __init__(self):
@@ -28,7 +29,7 @@ class MsgSaverAdapter(object):
       dbg.debug("exit")
       self.config = {'file':'1'}
 
-    def saveToConsole(self, data):
+    def saveToConsole(self, data, ts):
       '''
       print on Console
       '''
@@ -37,10 +38,10 @@ class MsgSaverAdapter(object):
      
       return 
 
-    def saveToFiles(self, data):
+    def saveToFiles(self, data, ts):
       dbg.debug("in")
 
-      file=FileFactory()
+      file=FileFactory('/tmp/%s' % ts)
       file.write(data)
       file.close
 
@@ -52,7 +53,7 @@ class MsgSaverAdapter(object):
       dbg.debug("exit")
       return 
 
-    def running(self, data):
+    def running(self, parser):
       '''
       save to :
        1. console
@@ -60,6 +61,9 @@ class MsgSaverAdapter(object):
        3. db...
       '''
       dbg.debug("in")
+
+      data = parser.data
+      ts = parser.timestamp
 
       if data.has_key('text'):
         dbg.debug("Got a text to saving")
@@ -70,11 +74,11 @@ class MsgSaverAdapter(object):
         return
 
       if self.config.has_key('file'):
-        saveToFiles(data)
+        self.saveToFiles(data, ts)
         dbg.debug("Sucess")
 
       if self.config.has_key('console'):
-        printToConsole(data)
+        self.printToConsole(data, ts)
         dbg.debug("Sucess")
 
       if self.config.has_key('db'):

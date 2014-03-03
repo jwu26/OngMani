@@ -22,9 +22,9 @@ from debug import dbg
 from debug import __ver__
   
 class FileFactory(object):
-    def __init__(self):
+    def __init__(self, log='/tmp/log.xml'):
       dbg.debug("in")
-      self.file='/tmp/log.xml'
+      self.file=log
       dbg.debug("exit")
 
     def open(self):
@@ -38,6 +38,5 @@ class FileFactory(object):
     def close(self):
       dbg.debug("Close file: %s", self.file)
       return
-
       
  
